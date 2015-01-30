@@ -8,3 +8,4 @@ x="xxxxxxxxhhhh"
 xas="xxx"
 
 print (a+b+x+xas)
+print (hex(34))
