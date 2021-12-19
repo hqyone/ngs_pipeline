@@ -1,58 +1,9 @@
-nextflow.enable.dsl=2
-
-//include { fastqc } from './modules/fastqc/main_old'
-//include { ECHO_META_NAME} from './modules/mod_test/main'
-
-//fq1= "/home/hqyone/mnt/2tb/code/dock_nextflow/data-raw/test.fastq"
-//samples = Channel
-                //.fromPath('/home/hqyone/mnt/2tb/code/dock_nextflow/data-raw/*.fastq')
-                //.map { file -> tuple(file.baseName, file) }
-
-
-// process fastqc{
-//     cpus 2
-//     memory "10G"
-//     container 'pegi3s/fastqc'
-
-//     publishDir "/home/hqyone/mnt/2tb/code/dock_nextflow/data_final", mode:'copy'
-//     input:
-//         set val(sample), file(fq1) from datasets
-//     output:
-//         file("${sample}_fastqc.zip") into fastqc_files
-    
-//     script:
-//         """
-//             fastqc -t ${task.cpus} $fq1
-//         """
-// }
-
 sample_sheet = "/home/hqyone/mnt/2tb/code/dock_nextflow/data-raw/sample_sheet.csv"
 samples = Channel.fromPath(sample_sheet)
                 .splitCsv(header:true, sep:",")
                 .map {row->tuple(row.sample_id, file(row.fastq1))}.view()
 
-// process fastqc1 {
-//     //tag "$meat.id"
-//     label 'process_medium'
-
-//     cpus 2
-//     memory "10G"
-//     container 'pegi3s/fastqc'
-
-//     publishDir "/home/hqyone/mnt/2tb/code/dock_nextflow/data_final", mode:'copy'
-//     input:
-//         tuple val(sample), file(fq1) from samples
-//     output:
-//         tuple val(sample),file("*.zip") emit: zips
-//         tuple val(sample), file("*.html") emit: htmls
-    
-//     script:
-//         """
-//             fastqc -t ${task.cpus} $fq1
-//         """
-// }
-
-process fastqc1 {
+process fastqc {
     //tag "$meat.id"
     label 'process_medium'
 
@@ -60,9 +11,9 @@ process fastqc1 {
     memory "10G"
     container 'pegi3s/fastqc'
     input:
-        tuple(val(sample), path(fq1)) //from samples
+        set (val(sample), path(fq1)) from samples
     output:
-        path("*.zip"), emit: zips //into zips
+        file ("*.zip") into zips
         //file("*.html") //into htmls
     script:
         """
@@ -71,14 +22,16 @@ process fastqc1 {
 
 }
 
-process a{
+process ECHO_META_NAME{
     input: 
-        file (zipfile)  //from zips.toList().merge()
+        file (zipfile) from zips.toList().merge()
     script:
-            """
-                echo ${zipfile}
-            """   
+        """
+            echo ${zipfile}
+        """   
 }
+
+
 
 // process minimap2{
 //     container "nanozoo/minimap2"

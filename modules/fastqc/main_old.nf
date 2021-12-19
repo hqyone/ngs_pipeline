@@ -8,11 +8,9 @@ process fastqc{
 
     publishDir "/home/hqyone/mnt/2tb/code/dock_nextflow/data_final", mode:'copy'
     input:
-
-        tuple val(sample), file(fq1) //from datasets
+        tuple(val(sample), path(fq1)) //from samples
     output:
-        file("*.zip")
-        file("*.html")
+        path("*.zip"), emit: zips //into zips
     
     script:
         """
