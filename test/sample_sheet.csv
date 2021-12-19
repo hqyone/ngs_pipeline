@@ -1,0 +1,3 @@
+sample_id,fastq1,fastq2
+s1,../code/ngs_pipeline/test/test.fastq,
+s2,../code/ngs_pipeline/test/test_1.fastq,

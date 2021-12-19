@@ -1,0 +1,2 @@
+name: fastqc
+description: Run FastQC on sequenced reads
